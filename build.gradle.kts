@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
@@ -39,7 +41,7 @@ dependencies {
     // QueryDSL
 
     runtimeOnly("com.mysql:mysql-connector-j") // for main
-    testImplementation("com.h2database:h2")    // for test
+    testImplementation("com.h2database:h2") // for test
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -77,3 +79,20 @@ allOpen {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+// xxxx-plain.jar 생성을 하지 않되록 한다 Case 1.
+tasks.withType<Jar> {
+    enabled = false
+}
+
+tasks.withType<BootJar> {
+    enabled = true
+}
+// xxxx-plain.jar 생성을 하지 않되록 한다 Case 1.
+
+/*
+tasks.named<Jar>("jar") {
+    // xxxx-plain.jar 생성을 하지 않되록 한다 Case 2.
+    enabled = false
+}
+*/
