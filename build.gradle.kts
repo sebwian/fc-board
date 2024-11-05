@@ -26,6 +26,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+//    implementation("org.springframework.boot:spring-boot-starter-hateoas") // Spring HATEOAS와 Spring Data의 PagedResourcesAssembler를 사용하여 Page를 PagedModel로 변환할 수 있기 때문에 hateoas 의존성을 추가해줘야 한다.
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
