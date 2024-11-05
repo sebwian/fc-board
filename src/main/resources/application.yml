@@ -1,15 +1,6 @@
 spring:
+    profiles:
+        active: dev
     application:
         name: fc-board
-    datasource:
-      url: jdbc:mysql://158.247.251.28:33307/board?useSSL=false&serverTimezone=Asia/Seoul
-      username: root
-      password: mysql
-      driver-class-name: com.mysql.cj.jdbc.Driver
-    jpa:
-        hibernate:
-            ddl-auto: update
-        show-sql: true
-        properties:
-          hibernate:
-              format_sql: true
+
