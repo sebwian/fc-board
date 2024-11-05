@@ -4,6 +4,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import pe.swkim.fcboard.exception.PostNotUpdatableException
+import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
 
 @Entity
 class Post(
@@ -19,4 +21,12 @@ class Post(
         protected set
     var content: String = content
         protected set
+
+    fun update(postUpdateRequestDto: PostUpdateRequestDto) {
+        if (postUpdateRequestDto.updatedBy != this.createdBy) throw PostNotUpdatableException()
+
+        this.title = postUpdateRequestDto.title
+        this.content = postUpdateRequestDto.content
+        super.updatedBy(postUpdateRequestDto.updatedBy)
+    }
 }
