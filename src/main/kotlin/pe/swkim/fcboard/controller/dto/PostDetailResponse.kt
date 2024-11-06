@@ -1,5 +1,7 @@
 package pe.swkim.fcboard.controller.dto
 
+import pe.swkim.fcboard.service.dto.PostDetailResponseDto
+
 data class PostDetailResponse(
     val id: Long,
     val title: String,
@@ -7,3 +9,12 @@ data class PostDetailResponse(
     val createdBy: String,
     val createdAt: String,
 )
+
+fun PostDetailResponseDto.toResponse(): PostDetailResponse =
+    PostDetailResponse(
+        id = id,
+        title = title,
+        content = content,
+        createdBy = createdBy,
+        createdAt = createdAt,
+    )

@@ -37,9 +37,15 @@ dependencies {
     // swagger
 
     // QueryDSL
-    implementation("com.querydsl:querydsl-apt:5.1.0") // https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
-    kapt("com.querydsl:querydsl-apt:5.1.0")
+    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
+//    implementation("com.querydsl:querydsl-apt:5.1.0") // https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
+//    implementation("jakarta.persistence:jakarta.persistence-api")
+//    implementation("jakarta.annotation:jakarta.annotation-api")
+    kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
+//    kapt("jakarta.annotation:jakarta.annotation-api")
+//    kapt("jakarta.persistence:jakarta.persistence-api")
     // QueryDSL
+//    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     runtimeOnly("com.mysql:mysql-connector-j") // for main
     testImplementation("com.h2database:h2") // for test

@@ -16,8 +16,8 @@ import pe.swkim.fcboard.controller.dto.PostSearchRequest
 import pe.swkim.fcboard.controller.dto.PostSummaryResponse
 import pe.swkim.fcboard.controller.dto.PostUpdateRequest
 import pe.swkim.fcboard.controller.dto.toDto
+import pe.swkim.fcboard.controller.dto.toResponse
 import pe.swkim.fcboard.service.PostService
-import java.time.LocalDateTime
 
 @RestController
 class PostController(
@@ -43,22 +43,11 @@ class PostController(
     @GetMapping("/posts/{id}")
     fun getPost(
         @PathVariable id: Long,
-    ): PostDetailResponse =
-        PostDetailResponse(
-            id = 1L,
-            title = "title",
-            content = "content",
-            createdBy = "thewall.ksw",
-            createdAt = LocalDateTime.now().toString(),
-        )
+    ): PostDetailResponse = postService.getPost(id).toResponse()
 
     @GetMapping("/posts")
     fun getPosts(
         pageable: Pageable,
         postSearchRequest: PostSearchRequest,
-    ): Page<PostSummaryResponse> {
-        println("title: ${postSearchRequest.title}")
-        println("createdBy: ${postSearchRequest.createdBy}")
-        return Page.empty()
-    }
+    ): Page<PostSummaryResponse> = postService.findPageBy(pageable, postSearchRequest.toDto()).toResponse()
 }

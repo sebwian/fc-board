@@ -1,5 +1,7 @@
 package pe.swkim.fcboard.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -7,8 +9,13 @@ import pe.swkim.fcboard.exception.PostNotDeletableException
 import pe.swkim.fcboard.exception.PostNotFoundException
 import pe.swkim.fcboard.repository.PostRepository
 import pe.swkim.fcboard.service.dto.PostCreateRequestDto
+import pe.swkim.fcboard.service.dto.PostDetailResponseDto
+import pe.swkim.fcboard.service.dto.PostSearchRequestDto
+import pe.swkim.fcboard.service.dto.PostSummaryResponseDto
 import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
+import pe.swkim.fcboard.service.dto.toDetailResponseDto
 import pe.swkim.fcboard.service.dto.toEntity
+import pe.swkim.fcboard.service.dto.toSummaryResponseDto
 
 @Service
 @Transactional(readOnly = true)
@@ -39,4 +46,13 @@ class PostService(
         postRepository.delete(post)
         return deleteId
     }
+
+    fun getPost(id: Long): PostDetailResponseDto =
+        postRepository.findByIdOrNull(id)?.toDetailResponseDto() ?: throw PostNotFoundException()
+
+    fun findPageBy(
+        pageRequest: Pageable,
+        postSearchRequestDto: PostSearchRequestDto,
+    ): Page<PostSummaryResponseDto> =
+        postRepository.findPageBy(pageRequest, postSearchRequestDto).toSummaryResponseDto()
 }

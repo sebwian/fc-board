@@ -1,27 +1,27 @@
-package pe.swkim.fcboard.controller.dto
+package pe.swkim.fcboard.service.dto
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import pe.swkim.fcboard.service.dto.PostSummaryResponseDto
+import pe.swkim.fcboard.domain.Post
 
-data class PostSummaryResponse(
+data class PostSummaryResponseDto(
     val id: Long,
     val title: String,
     val createdBy: String,
     val createdAt: String,
 )
 
-fun Page<PostSummaryResponseDto>.toResponse() =
+fun Page<Post>.toSummaryResponseDto() =
     PageImpl(
-        content.map { it.toResponse() },
+        content.map { it.toSummaryResponseDto() },
         pageable,
         totalElements,
     )
 
-fun PostSummaryResponseDto.toResponse() =
-    PostSummaryResponse(
+fun Post.toSummaryResponseDto() =
+    PostSummaryResponseDto(
         id = this.id,
         title = this.title,
         createdBy = this.createdBy,
-        createdAt = this.createdAt,
+        createdAt = this.createdAt.toString(),
     )
