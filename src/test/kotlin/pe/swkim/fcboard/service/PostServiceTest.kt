@@ -9,10 +9,12 @@ import io.kotest.matchers.string.shouldContain
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
+import pe.swkim.fcboard.domain.Comment
 import pe.swkim.fcboard.domain.Post
 import pe.swkim.fcboard.exception.PostNotDeletableException
 import pe.swkim.fcboard.exception.PostNotFoundException
 import pe.swkim.fcboard.exception.PostNotUpdatableException
+import pe.swkim.fcboard.repository.CommentRepository
 import pe.swkim.fcboard.repository.PostRepository
 import pe.swkim.fcboard.service.dto.PostCreateRequestDto
 import pe.swkim.fcboard.service.dto.PostSearchRequestDto
@@ -22,6 +24,7 @@ import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
 class PostServiceTest(
     private val postService: PostService,
     private val postRepository: PostRepository,
+    private val commentRepository: CommentRepository,
 ) : BehaviorSpec({
         beforeSpec {
             postRepository.saveAll(
@@ -171,6 +174,21 @@ class PostServiceTest(
                     shouldThrow<PostNotFoundException> {
                         postService.getPost(999L)
                     }
+                }
+            }
+            When("댓글 추가 시") {
+                val comment1 = commentRepository.save(Comment("댓글 내용 1", saved, "thewall.ksw"))
+                val comment2 = commentRepository.save(Comment("댓글 내용 2", saved, "thewall.ksw"))
+                val comment3 = commentRepository.save(Comment("댓글 내용 3", saved, "thewall.ksw"))
+                val post = postService.getPost(saved.id)
+                then("댓글이 함께 조회됨을 확인한다") {
+                    post.comments.size shouldBe 3
+                    post.comments[0].content shouldBe comment1.content
+                    post.comments[1].content shouldBe comment2.content
+                    post.comments[2].content shouldBe comment3.content
+                    post.comments[0].createdBy shouldBe comment1.createdBy
+                    post.comments[1].createdBy shouldBe comment2.createdBy
+                    post.comments[2].createdBy shouldBe comment3.createdBy
                 }
             }
         }
