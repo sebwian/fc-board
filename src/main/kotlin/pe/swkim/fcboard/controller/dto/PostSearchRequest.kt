@@ -10,6 +10,8 @@ data class PostSearchRequest(
     val content: String?,
     @RequestParam
     val createdBy: String?,
+    @RequestParam
+    val tag: String?,
 )
 
 fun PostSearchRequest.toDto() =

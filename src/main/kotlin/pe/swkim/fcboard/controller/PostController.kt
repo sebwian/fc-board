@@ -1,5 +1,6 @@
 package pe.swkim.fcboard.controller
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -19,6 +20,8 @@ import pe.swkim.fcboard.controller.dto.toDto
 import pe.swkim.fcboard.controller.dto.toResponse
 import pe.swkim.fcboard.service.PostService
 
+private val logger = KotlinLogging.logger {}
+
 @RestController
 class PostController(
     private val postService: PostService,
@@ -26,13 +29,19 @@ class PostController(
     @PostMapping("/posts")
     fun createPost(
         @RequestBody postCreateRequest: PostCreateRequest,
-    ): Long = postService.createPost(postCreateRequest.toDto())
+    ): Long {
+        logger.trace { "$postCreateRequest" }
+        return postService.createPost(postCreateRequest.toDto())
+    }
 
     @PutMapping("/posts/{id}")
     fun updatePost(
         @PathVariable id: Long,
         @RequestBody postUpdateRequest: PostUpdateRequest,
-    ): Long = postService.updatePost(id, postUpdateRequest.toDto())
+    ): Long {
+        logger.trace { "$postUpdateRequest" }
+        return postService.updatePost(id, postUpdateRequest.toDto())
+    }
 
     @DeleteMapping("/posts/{id}")
     fun deletePost(
@@ -49,5 +58,8 @@ class PostController(
     fun getPosts(
         pageable: Pageable,
         postSearchRequest: PostSearchRequest,
-    ): Page<PostSummaryResponse> = postService.findPageBy(pageable, postSearchRequest.toDto()).toResponse()
+    ): Page<PostSummaryResponse> {
+        logger.trace { "$postSearchRequest" }
+        return postService.findPageBy(pageable, postSearchRequest.toDto()).toResponse()
+    }
 }
