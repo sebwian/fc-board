@@ -1,6 +1,9 @@
 spring:
-    profiles:
-        active: dev
     application:
         name: fc-board
+    profiles:
+        active: dev
+        group:
+          local: console-logging, low-level-logging
+          dev: file-logging, high-level-logging
 
