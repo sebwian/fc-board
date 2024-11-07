@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <property name="consolePattern"	value="%highlight(%-5level) %d{yyyy-MM-dd HH:mm:ss}%magenta([%thread]) %logger[%method:%line] - %yellow(%msg) %n"/>
+
+    <!-- Console Log Appender Module -->
+    <springProfile name="console-logging">
+        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${consolePattern}</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+    <!-- Console Log Appender Module -->
+
+    <!-- Log Level Module -->
+    <springProfile name="test-level-logging">
+        <logger name="root" level="info" additive="false" />
+        <logger name="org.springframework" level="info" additive="false" />
+        <logger name="pe.swkim" level="trace" additive="false" />
+    </springProfile>
+    <!-- Log Level Module -->
+
+    <root>
+        <springProfile name="console-logging">
+            <appender-ref ref="console" />
+        </springProfile>
+
+    </root>
+</configuration>

@@ -10,38 +10,30 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import pe.swkim.fcboard.controller.dto.CommentCreateRequest
 import pe.swkim.fcboard.controller.dto.CommentUpdateRequest
+import pe.swkim.fcboard.controller.dto.toDto
+import pe.swkim.fcboard.service.CommentService
 
 private val logger = KotlinLogging.logger {}
 
 @RestController
-class CommentController {
+class CommentController(
+    private val commentService: CommentService,
+) {
     @PostMapping("posts/{postId}/comments")
     fun createComment(
         @PathVariable postId: Long,
         @RequestBody commentCreateRequest: CommentCreateRequest,
-    ): Long {
-        logger.trace { "${commentCreateRequest.content}" }
-        logger.trace { "${commentCreateRequest.createdBy}" }
-        return 1L
-    }
+    ): Long = commentService.createComment(postId, commentCreateRequest.toDto())
 
     @PutMapping("comments/{commentId}")
     fun updateComment(
         @PathVariable commentId: Long,
         @RequestBody commentUpdateRequest: CommentUpdateRequest,
-    ): Long {
-        logger.trace { "${commentUpdateRequest.content}" }
-        logger.trace { "${commentUpdateRequest.updatedBy}" }
-        return commentId
-    }
+    ): Long = commentService.updateComment(commentId, commentUpdateRequest.toDto())
 
     @DeleteMapping("comments/{commentId}")
     fun deleteComment(
         @PathVariable commentId: Long,
         @RequestParam deletedBy: String,
-    ): Long {
-        logger.trace { "$commentId" }
-        logger.trace { "$deletedBy" }
-        return commentId
-    }
+    ): Long = commentService.deleteComment(commentId, deletedBy)
 }

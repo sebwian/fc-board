@@ -1,6 +1,8 @@
 spring:
     application:
         name: fc-board
+    profiles:
+        active: console-logging, test-level-logging
     datasource:
       url: jdbc:h2:mem:test
       username: sa
