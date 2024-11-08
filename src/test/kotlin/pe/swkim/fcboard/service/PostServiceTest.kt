@@ -16,6 +16,7 @@ import pe.swkim.fcboard.exception.PostNotFoundException
 import pe.swkim.fcboard.exception.PostNotUpdatableException
 import pe.swkim.fcboard.repository.CommentRepository
 import pe.swkim.fcboard.repository.PostRepository
+import pe.swkim.fcboard.repository.TagRespository
 import pe.swkim.fcboard.service.dto.PostCreateRequestDto
 import pe.swkim.fcboard.service.dto.PostSearchRequestDto
 import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
@@ -25,6 +26,7 @@ class PostServiceTest(
     private val postService: PostService,
     private val postRepository: PostRepository,
     private val commentRepository: CommentRepository,
+    private val tagRespository: TagRespository,
 ) : BehaviorSpec({
         beforeSpec {
             postRepository.saveAll(
@@ -61,6 +63,23 @@ class PostServiceTest(
                     post?.createdBy shouldBe "thewall.ksw"
                 }
             }
+            When("태그가 추가되면") {
+                val postId =
+                    postService.createPost(
+                        PostCreateRequestDto(
+                            title = "제목",
+                            content = "내용",
+                            createdBy = "thewall.ksw",
+                            tags = listOf("tag1", "tag2"),
+                        ),
+                    )
+                then("'태그가 정상적으로 추가됨을 확인한다") {
+                    val tags = tagRespository.findByPostId(postId)
+                    tags.size shouldBe 2
+                    tags[0].name shouldBe "tag1"
+                    tags[1].name shouldBe "tag2"
+                }
+            }
         }
         given("게시글 수정 시") {
             val saved =
@@ -69,6 +88,7 @@ class PostServiceTest(
                         title = "제목",
                         content = "내용",
                         createdBy = "thewall.ksw",
+                        tags = listOf("tag1", "tag2"),
                     ),
                 )
             When("정상 수정 시") {
@@ -116,6 +136,37 @@ class PostServiceTest(
                             ),
                         )
                     }
+                }
+            }
+            When("태그가 수정 되었을 때") {
+                val updatedId =
+                    postService.updatePost(
+                        saved.id,
+                        PostUpdateRequestDto(
+                            title = "update 제목",
+                            content = "update 내용",
+                            updatedBy = "thewall.ksw",
+                            tags = listOf("tag1", "tag2", "tag3"),
+                        ),
+                    )
+                then("정상적으로 수정됨을 확인한다") {
+                    val tags = tagRespository.findByPostId(updatedId)
+                    tags.size shouldBe 3
+                    tags[2].name shouldBe "tag3"
+                }
+                then("태그 순서가 변경되었을때 정상적으로 변경됨을 확인한다") {
+                    postService.updatePost(
+                        saved.id,
+                        PostUpdateRequestDto(
+                            title = "update 제목",
+                            content = "update 내용",
+                            updatedBy = "thewall.ksw",
+                            tags = listOf("tag3", "tag2", "tag1"),
+                        ),
+                    )
+                    val tags = tagRespository.findByPostId(updatedId)
+                    tags.size shouldBe 3
+                    tags[2].name shouldBe "tag1"
                 }
             }
         }

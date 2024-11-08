@@ -29,7 +29,7 @@ class Post(
     var comments: MutableList<Comment> = mutableListOf()
         protected set
 
-    @OneToMany(mappedBy = "tag", orphanRemoval = true, cascade = [(CascadeType.ALL)])
+    @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = [(CascadeType.ALL)])
     var tags: MutableList<Tag> = tags.map { Tag(it, this, createdBy) }.toMutableList()
         protected set
 
@@ -39,5 +39,13 @@ class Post(
         this.title = postUpdateRequestDto.title
         this.content = postUpdateRequestDto.content
         super.updatedBy(postUpdateRequestDto.updatedBy)
+        replaceTags(postUpdateRequestDto.tags)
+    }
+
+    private fun replaceTags(tags: List<String>) {
+        if (this.tags.map { it.name } != tags) {
+            this.tags.clear()
+            this.tags.addAll(tags.map { Tag(it, this, createdBy) })
+        }
     }
 }
