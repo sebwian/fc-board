@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import pe.swkim.fcboard.domain.Comment
 import pe.swkim.fcboard.domain.Post
+import pe.swkim.fcboard.domain.Tag
 import pe.swkim.fcboard.exception.PostNotDeletableException
 import pe.swkim.fcboard.exception.PostNotFoundException
 import pe.swkim.fcboard.exception.PostNotUpdatableException
@@ -31,16 +32,66 @@ class PostServiceTest(
         beforeSpec {
             postRepository.saveAll(
                 listOf(
-                    Post(title = "title1", content = "content1", createdBy = "thewall.ksw"),
-                    Post(title = "title12", content = "content2", createdBy = "thewall.ksw"),
-                    Post(title = "title13", content = "content3", createdBy = "thewall.ksw"),
-                    Post(title = "title14", content = "content4", createdBy = "thewall.ksw"),
-                    Post(title = "title15", content = "content5", createdBy = "thewall.ksw"),
-                    Post(title = "title6", content = "content6", createdBy = "chochopooding"),
-                    Post(title = "title7", content = "content7", createdBy = "chochopooding"),
-                    Post(title = "title8", content = "content8", createdBy = "chochopooding"),
-                    Post(title = "title9", content = "content9", createdBy = "chochopooding"),
-                    Post(title = "title20", content = "content10", createdBy = "chochopooding"),
+                    Post(
+                        title = "title1",
+                        content = "content1",
+                        createdBy = "thewall.ksw",
+                        tags = listOf("tag1", "tag2"),
+                    ),
+                    Post(
+                        title = "title12",
+                        content = "content2",
+                        createdBy = "thewall.ksw",
+                        tags = listOf("tag1", "tag2"),
+                    ),
+                    Post(
+                        title = "title13",
+                        content = "content3",
+                        createdBy = "thewall.ksw",
+                        tags = listOf("tag1", "tag2"),
+                    ),
+                    Post(
+                        title = "title14",
+                        content = "content4",
+                        createdBy = "thewall.ksw",
+                        tags = listOf("tag1", "tag2"),
+                    ),
+                    Post(
+                        title = "title15",
+                        content = "content5",
+                        createdBy = "thewall.ksw",
+                        tags = listOf("tag1", "tag2"),
+                    ),
+                    Post(
+                        title = "title6",
+                        content = "content6",
+                        createdBy = "chochopooding",
+                        tags = listOf("tag1", "tag5"),
+                    ),
+                    Post(
+                        title = "title7",
+                        content = "content7",
+                        createdBy = "chochopooding",
+                        tags = listOf("tag1", "tag5"),
+                    ),
+                    Post(
+                        title = "title8",
+                        content = "content8",
+                        createdBy = "chochopooding",
+                        tags = listOf("tag1", "tag5"),
+                    ),
+                    Post(
+                        title = "title9",
+                        content = "content9",
+                        createdBy = "chochopooding",
+                        tags = listOf("tag1", "tag5"),
+                    ),
+                    Post(
+                        title = "title20",
+                        content = "content20",
+                        createdBy = "chochopooding",
+                        tags = listOf("tag1", "tag5"),
+                    ),
                 ),
             )
         }
@@ -211,6 +262,13 @@ class PostServiceTest(
                         createdBy = "thewall.ksw",
                     ),
                 )
+            tagRespository.saveAll(
+                listOf(
+                    Tag(name = "tag1", saved, saved.createdBy),
+                    Tag(name = "tag2", saved, saved.createdBy),
+                    Tag(name = "tag3", saved, saved.createdBy),
+                ),
+            )
             When("정상 조회 시") {
                 val post = postService.getPost(saved.id)
                 then("게시글의 내용이 정상적으로 반환됨을 확인한다") {
@@ -218,6 +276,12 @@ class PostServiceTest(
                     post.title shouldBe saved.title
                     post.content shouldBe saved.content
                     post.createdBy shouldBe saved.createdBy
+                }
+                then("태그가 정상적으로 조회됨을 확인한다") {
+                    post.tags.size shouldBe 3
+                    post.tags[0] shouldBe "tag1"
+                    post.tags[1] shouldBe "tag2"
+                    post.tags[2] shouldBe "tag3"
                 }
             }
             When("게시글이 없을 때") {
@@ -268,14 +332,33 @@ class PostServiceTest(
                 val postPage =
                     postService.findPageBy(
                         PageRequest.of(0, 5),
-                        PostSearchRequestDto(createdBy = "thewall.ksw"),
+                        PostSearchRequestDto(createdBy = "thewall.ksw", title = "title1"),
                     )
                 then("작성자에 해당하는 게시글이 반환된다") {
                     postPage.number shouldBe 0
                     postPage.size shouldBe 5
                     postPage.content.size shouldBe 5
-                    postPage.content[0].title shouldContain "제목"
+                    postPage.content[0].title shouldContain "title1"
                     postPage.content[0].createdBy shouldBe "thewall.ksw"
+                }
+                then("첫번째 태그가 함께 조회됨을 확인한다") {
+                    postPage.content.forEach {
+                        it.firstTag shouldBe "tag1"
+                    }
+                }
+            }
+            When("태그로 검색") {
+                val postPage =
+                    postService.findPageBy(
+                        PageRequest.of(0, 5),
+                        PostSearchRequestDto(tag = "tag5"),
+                    )
+                then("태그에 해당하는 게시글이 반환된다") {
+                    postPage.number shouldBe 0
+                    postPage.size shouldBe 5
+                    postPage.content.size shouldBe 5
+                    postPage.content[0].title shouldContain "title6"
+                    postPage.content[1].title shouldContain "title7"
                 }
             }
         }
