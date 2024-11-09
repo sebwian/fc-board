@@ -5,17 +5,20 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import pe.swkim.fcboard.service.LikeService
 
 private val logger = KotlinLogging.logger {}
 
 @RestController
-class LikeController {
+class LikeController(
+    private val likeService: LikeService,
+) {
     @PostMapping("posts/{postId}/likes")
     fun createLikes(
         @PathVariable postId: Long,
         @RequestParam createdBy: String,
     ): Long {
         logger.trace { "$createdBy $postId" }
-        return 1L
+        return likeService.createLike(postId, createdBy)
     }
 }
