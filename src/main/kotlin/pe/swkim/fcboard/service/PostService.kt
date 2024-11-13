@@ -21,6 +21,7 @@ import pe.swkim.fcboard.service.dto.toSummaryResponseDto
 @Transactional(readOnly = true)
 class PostService(
     private val postRepository: PostRepository,
+    private val likeService: LikeService,
 ) {
     @Transactional
     fun createPost(postCreateRequestDto: PostCreateRequestDto): Long =
@@ -47,12 +48,14 @@ class PostService(
         return deleteId
     }
 
-    fun getPost(id: Long): PostDetailResponseDto =
-        postRepository.findByIdOrNull(id)?.toDetailResponseDto() ?: throw PostNotFoundException()
+    fun getPost(id: Long): PostDetailResponseDto {
+        val likeCount = likeService.countLike(id)
+        return postRepository.findByIdOrNull(id)?.toDetailResponseDto(likeCount) ?: throw PostNotFoundException()
+    }
 
     fun findPageBy(
         pageRequest: Pageable,
         postSearchRequestDto: PostSearchRequestDto,
     ): Page<PostSummaryResponseDto> =
-        postRepository.findPageBy(pageRequest, postSearchRequestDto).toSummaryResponseDto()
+        postRepository.findPageBy(pageRequest, postSearchRequestDto).toSummaryResponseDto(likeService::countLike)
 }

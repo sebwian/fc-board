@@ -28,6 +28,7 @@ class PostServiceTest(
     private val postRepository: PostRepository,
     private val commentRepository: CommentRepository,
     private val tagRespository: TagRespository,
+    private val likeService: LikeService,
 ) : BehaviorSpec({
         beforeSpec {
             postRepository.saveAll(
@@ -269,6 +270,9 @@ class PostServiceTest(
                     Tag(name = "tag3", saved, saved.createdBy),
                 ),
             )
+            likeService.createLike(saved.id, "thewall.ksw")
+            likeService.createLike(saved.id, "chocopooding")
+            likeService.createLike(saved.id, "heesis")
             When("정상 조회 시") {
                 val post = postService.getPost(saved.id)
                 then("게시글의 내용이 정상적으로 반환됨을 확인한다") {
@@ -282,6 +286,9 @@ class PostServiceTest(
                     post.tags[0] shouldBe "tag1"
                     post.tags[1] shouldBe "tag2"
                     post.tags[2] shouldBe "tag3"
+                }
+                then("좋아요 개수가 정상적으로 조회됨을 확인한다") {
+                    post.likeCount shouldBe 3
                 }
             }
             When("게시글이 없을 때") {
@@ -359,6 +366,25 @@ class PostServiceTest(
                     postPage.content.size shouldBe 5
                     postPage.content[0].title shouldContain "title6"
                     postPage.content[1].title shouldContain "title7"
+                }
+            }
+            When("종아요가 2개 추가되었을 때") {
+                val postPage =
+                    postService.findPageBy(
+                        PageRequest.of(0, 5),
+                        PostSearchRequestDto(tag = "tag5"),
+                    )
+                postPage.forEach {
+                    likeService.createLike(it.id, "thewall.ksw")
+                    likeService.createLike(it.id, "chocopooding")
+                }
+                val likePostPage =
+                    postService.findPageBy(
+                        PageRequest.of(0, 5),
+                        PostSearchRequestDto(tag = "tag5"),
+                    )
+                then("좋아요 개수가 정상적으로 조회됨을 확인한다") {
+                    likePostPage.content.forEach { it.likeCount shouldBe 2 }
                 }
             }
         }
