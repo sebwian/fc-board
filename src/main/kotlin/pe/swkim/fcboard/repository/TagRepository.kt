@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
+import pe.swkim.fcboard.domain.QPost.post
 import pe.swkim.fcboard.domain.QTag.tag
 import pe.swkim.fcboard.domain.Tag
 
@@ -29,7 +30,7 @@ class CustomTagRepositoryImpl :
         tagName: String,
     ): Page<Tag> =
         from(tag)
-            .join(tag.post)
+            .join(tag.post, post)
             .fetchJoin()
             .where(tag.name.eq(tagName))
             .orderBy(tag.post.createdAt.desc())

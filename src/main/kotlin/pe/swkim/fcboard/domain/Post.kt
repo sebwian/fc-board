@@ -5,11 +5,19 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Index
 import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import pe.swkim.fcboard.exception.PostNotUpdatableException
 import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
 
 @Entity
+@Table(
+    name = "post",
+    indexes = [
+        Index(name = "idx_created_by", columnList = "created_by"),
+    ],
+)
 class Post(
     createdBy: String,
     title: String,
