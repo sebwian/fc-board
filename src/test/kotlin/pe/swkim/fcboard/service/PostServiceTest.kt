@@ -17,7 +17,7 @@ import pe.swkim.fcboard.exception.PostNotFoundException
 import pe.swkim.fcboard.exception.PostNotUpdatableException
 import pe.swkim.fcboard.repository.CommentRepository
 import pe.swkim.fcboard.repository.PostRepository
-import pe.swkim.fcboard.repository.TagRespository
+import pe.swkim.fcboard.repository.TagRepository
 import pe.swkim.fcboard.service.dto.PostCreateRequestDto
 import pe.swkim.fcboard.service.dto.PostSearchRequestDto
 import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
@@ -27,7 +27,7 @@ class PostServiceTest(
     private val postService: PostService,
     private val postRepository: PostRepository,
     private val commentRepository: CommentRepository,
-    private val tagRespository: TagRespository,
+    private val tagRespository: TagRepository,
     private val likeService: LikeService,
 ) : BehaviorSpec({
         beforeSpec {

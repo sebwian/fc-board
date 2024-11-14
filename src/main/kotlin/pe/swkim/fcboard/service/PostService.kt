@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import pe.swkim.fcboard.exception.PostNotDeletableException
 import pe.swkim.fcboard.exception.PostNotFoundException
 import pe.swkim.fcboard.repository.PostRepository
+import pe.swkim.fcboard.repository.TagRepository
 import pe.swkim.fcboard.service.dto.PostCreateRequestDto
 import pe.swkim.fcboard.service.dto.PostDetailResponseDto
 import pe.swkim.fcboard.service.dto.PostSearchRequestDto
@@ -22,6 +23,7 @@ import pe.swkim.fcboard.service.dto.toSummaryResponseDto
 class PostService(
     private val postRepository: PostRepository,
     private val likeService: LikeService,
+    private val tagRespository: TagRepository,
 ) {
     @Transactional
     fun createPost(postCreateRequestDto: PostCreateRequestDto): Long =
@@ -56,6 +58,10 @@ class PostService(
     fun findPageBy(
         pageRequest: Pageable,
         postSearchRequestDto: PostSearchRequestDto,
-    ): Page<PostSummaryResponseDto> =
-        postRepository.findPageBy(pageRequest, postSearchRequestDto).toSummaryResponseDto(likeService::countLike)
+    ): Page<PostSummaryResponseDto> {
+        postSearchRequestDto.tag?.let { tag ->
+            return tagRespository.findPageBy(pageRequest, tag).toSummaryResponseDto(likeService::countLike)
+        }
+        return postRepository.findPageBy(pageRequest, postSearchRequestDto).toSummaryResponseDto(likeService::countLike)
+    }
 }
