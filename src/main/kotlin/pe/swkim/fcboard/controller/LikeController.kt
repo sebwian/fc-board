@@ -17,8 +17,8 @@ class LikeController(
     fun createLikes(
         @PathVariable postId: Long,
         @RequestParam createdBy: String,
-    ): Long {
+    ) {
         logger.trace { "$createdBy $postId" }
-        return likeService.createLike(postId, createdBy)
+        likeService.createLike(postId, createdBy)
     }
 }
