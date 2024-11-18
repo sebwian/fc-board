@@ -302,7 +302,7 @@ class PostServiceTest(
             likeService.createLike(saved.id, "chocopooding")
             likeService.createLike(saved.id, "heesis")
             When("정상 조회 시") {
-                Thread.sleep(300) // async 로 인한 차이 적용
+                Thread.sleep(500) // async 로 인한 차이 적용
                 val post = postService.getPost(saved.id)
                 then("게시글의 내용이 정상적으로 반환됨을 확인한다") {
                     post.id shouldBe saved.id
