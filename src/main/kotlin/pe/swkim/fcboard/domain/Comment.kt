@@ -18,7 +18,7 @@ import pe.swkim.fcboard.service.dto.CommentUpdateRequestDto
 @Table(
     name = "comment",
     indexes = [
-        Index(name = "idx_post_id", columnList = "post_id"),
+        Index(name = "idx_comment_post_id", columnList = "post_id"),
     ],
 )
 class Comment(

@@ -15,7 +15,7 @@ import pe.swkim.fcboard.service.dto.PostUpdateRequestDto
 @Table(
     name = "post",
     indexes = [
-        Index(name = "idx_created_by", columnList = "created_by"),
+        Index(name = "idx_post_created_by", columnList = "created_by"),
     ],
 )
 class Post(

@@ -16,8 +16,8 @@ import jakarta.persistence.Table
 @Table(
     name = "tag",
     indexes = [
-        Index(name = "idx_name", columnList = "name"),
-        Index(name = "idx_post_id", columnList = "post_id"),
+        Index(name = "idx_tag_name", columnList = "name"),
+        Index(name = "idx_tag_post_id", columnList = "post_id"),
     ],
 )
 class Tag(

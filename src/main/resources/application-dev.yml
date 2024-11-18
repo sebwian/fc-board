@@ -16,6 +16,11 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
 #        dialect: org.hibernate.dialect.MySQLDialect
+  cache:
+    type: redis
+    redis:
+      host: awseb-e-pxwbm5r25n-stack-awsebrdsdatabase-q8laz14mcred.cju0ockocs69.ap-northeast-2.rds.amazonaws.com
+      port: 6379
 
 
 

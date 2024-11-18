@@ -16,7 +16,7 @@ import jakarta.persistence.Table
 @Table(
     name = "likes",
     indexes = [
-        Index(name = "idx_post_id", columnList = "post_id"),
+        Index(name = "idx_like_post_id", columnList = "post_id"),
     ],
 )
 class Like(

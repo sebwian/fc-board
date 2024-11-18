@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
 //    implementation("org.springframework.boot:spring-boot-starter-hateoas") // Spring HATEOAS와 Spring Data의 PagedResourcesAssembler를 사용하여 Page를 PagedModel로 변환할 수 있기 때문에 hateoas 의존성을 추가해줘야 한다.
@@ -53,19 +54,17 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
     // kotest (intellij plugin kotest needed)
-    testImplementation(
-        "io.kotest:kotest-runner-junit5:5.9.1",
-    ) // https://mvnrepository.com/artifact/io.kotest/kotest-runner-junit5
-    testImplementation(
-        "io.kotest:kotest-assertions-core:5.9.1",
-    ) // https://mvnrepository.com/artifact/io.kotest/kotest-assertions-core
-    testImplementation(
-        "io.kotest:kotest-property:5.9.1",
-    ) // https://mvnrepository.com/artifact/io.kotest/kotest-property
-    testImplementation(
-        "io.kotest.extensions:kotest-extensions-spring:1.3.0",
-    ) // https://mvnrepository.com/artifact/io.kotest.extensions/kotest-extensions-spring
+    testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+    testImplementation("io.kotest:kotest-property:5.9.1")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     // kotest
+
+    // Testcontainers
+//    testImplementation("org.testcontainers:testcontainers:1.20.3")
+//    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+    // Testcontainers
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

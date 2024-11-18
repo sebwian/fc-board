@@ -2,6 +2,7 @@ package pe.swkim.fcboard.service
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.extensions.testcontainers.perSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -9,6 +10,8 @@ import io.kotest.matchers.string.shouldContain
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pe.swkim.fcboard.domain.Comment
 import pe.swkim.fcboard.domain.Post
 import pe.swkim.fcboard.domain.Tag
@@ -29,8 +32,25 @@ class PostServiceTest(
     private val commentRepository: CommentRepository,
     private val tagRespository: TagRepository,
     private val likeService: LikeService,
-) : BehaviorSpec({
+) : BehaviorSpec() {
+    init {
+        val redisContainer =
+            GenericContainer<Nothing>("redis:7.4.1-alpine").apply {
+//                withExposedPorts(6379)
+                waitingFor(LogMessageWaitStrategy().withRegEx(".*Ready to accept connections tcp.*\\s").withTimes(2))
+            }
+
+        afterSpec {
+            redisContainer.stop()
+        }
+
         beforeSpec {
+            redisContainer.start()
+
+            println("MappedPort:${redisContainer.getMappedPort(6379)}")
+            System.setProperty("spring.cache.redis.port", redisContainer.getMappedPort(6379).toString())
+            listener(redisContainer.perSpec())
+
             postRepository.saveAll(
                 listOf(
                     Post(
@@ -96,6 +116,7 @@ class PostServiceTest(
                 ),
             )
         }
+
         given("게시글 생성 시") {
             When("게시글 생성") {
                 val postId =
@@ -133,6 +154,7 @@ class PostServiceTest(
                 }
             }
         }
+
         given("게시글 수정 시") {
             val saved =
                 postRepository.save(
@@ -222,6 +244,7 @@ class PostServiceTest(
                 }
             }
         }
+
         given("게시글 삭제 시") {
             When("정상 삭제 시") {
                 val saved =
@@ -254,6 +277,7 @@ class PostServiceTest(
                 }
             }
         }
+
         given("게시글 상세 조회 시") {
             val saved =
                 postRepository.save(
@@ -314,6 +338,7 @@ class PostServiceTest(
                 }
             }
         }
+
         given("게시글 목록 조회 시") {
             When("정상 조회 시") {
                 val postPage = postService.findPageBy(PageRequest.of(0, 5), PostSearchRequestDto())
@@ -388,4 +413,5 @@ class PostServiceTest(
                 }
             }
         }
-    })
+    }
+}

@@ -2,12 +2,14 @@ package pe.swkim.fcboard.service
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.extensions.testcontainers.perSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
+import org.testcontainers.containers.GenericContainer
 import pe.swkim.fcboard.domain.Comment
 import pe.swkim.fcboard.domain.Post
 import pe.swkim.fcboard.exception.CommentNotDeletableException
@@ -24,6 +26,15 @@ class CommentServiceTest(
     private val commentRepository: CommentRepository,
     private val postRepository: PostRepository,
 ) : BehaviorSpec({
+        val redisContainer = GenericContainer<Nothing>("redis:latest")
+        beforeSpec {
+            redisContainer.portBindings.add("16379:36379")
+            redisContainer.start()
+            listener(redisContainer.perSpec())
+        }
+        afterSpec {
+            redisContainer.stop()
+        }
         given("댓글 생성 시") {
             val commentCreateRequestDto =
                 CommentCreateRequestDto(
