@@ -3,7 +3,10 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
-    id("org.springframework.boot") version "3.3.5"
+    id("org.springframework.boot") version "3.3.5" // testcontainers redis 연결 안됨
+//    id("org.springframework.boot") version "3.2.11" // testcontainers redis 연결 안됨
+//    id("org.springframework.boot") version "3.2.0" // testcontainers redis 연결 안됨
+//    id("org.springframework.boot") version "3.1.12" // testcontainers redis 연결 됨
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("plugin.jpa") version "2.0.21"
     kotlin("kapt") version "2.0.21"
@@ -48,7 +51,7 @@ dependencies {
     // kotlin-logging
     // https://mvnrepository.com/artifact/io.github.oshai/kotlin-logging-jvm
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
-    // kotlin\-logging
+    // kotlin-logging
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -64,6 +67,8 @@ dependencies {
 //    testImplementation("org.testcontainers:testcontainers:1.20.3")
 //    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+    // 현재 방법으로 지원되는 마지막 testcontainers 버전, 이후 버전은 kotest 버전업이거나 방법이 바뀌어야 할 듯
+    testImplementation("org.testcontainers:testcontainers:1.19.0")
     // Testcontainers
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

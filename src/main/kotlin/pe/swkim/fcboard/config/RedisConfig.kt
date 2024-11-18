@@ -28,7 +28,7 @@ class RedisConfig {
         template.connectionFactory = redisConnectionFactory()
         template.keySerializer = StringRedisSerializer()
         template.valueSerializer = StringRedisSerializer()
-        template.hashKeySerializer = StringRedisSerializer()
+//        template.hashKeySerializer = StringRedisSerializer()
         return template
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import pe.swkim.fcboard.domain.Comment
 import pe.swkim.fcboard.domain.Post
 import pe.swkim.fcboard.domain.Tag
@@ -36,19 +35,24 @@ class PostServiceTest(
     init {
         val redisContainer =
             GenericContainer<Nothing>("redis:7.4.1-alpine").apply {
-//                withExposedPorts(6379)
-                waitingFor(LogMessageWaitStrategy().withRegEx(".*Ready to accept connections tcp.*\\s").withTimes(2))
+                portBindings.add("16379:6379")
             }
+//            GenericContainer<Nothing>("redis:7.4.1-alpine").apply {
+// //                withExposedPorts(6379)
+// //                waitingFor(LogMessageWaitStrategy().withRegEx(".*Ready to accept connections tcp\\s").withTimes(2))
+//                portBindings.add("16379:6379")
+//            }
 
         afterSpec {
             redisContainer.stop()
         }
 
         beforeSpec {
+//            redisContainer.portBindings.add("16379:6379")
             redisContainer.start()
 
-            println("MappedPort:${redisContainer.getMappedPort(6379)}")
-            System.setProperty("spring.cache.redis.port", redisContainer.getMappedPort(6379).toString())
+//            println("MappedPort:${redisContainer.getMappedPort(6379)}")
+//            System.setProperty("spring.cache.redis.port", redisContainer.getMappedPort(6379).toString())
             listener(redisContainer.perSpec())
 
             postRepository.saveAll(
@@ -298,6 +302,7 @@ class PostServiceTest(
             likeService.createLike(saved.id, "chocopooding")
             likeService.createLike(saved.id, "heesis")
             When("정상 조회 시") {
+                Thread.sleep(300) // async 로 인한 차이 적용
                 val post = postService.getPost(saved.id)
                 then("게시글의 내용이 정상적으로 반환됨을 확인한다") {
                     post.id shouldBe saved.id
@@ -403,6 +408,7 @@ class PostServiceTest(
                     likeService.createLike(it.id, "thewall.ksw")
                     likeService.createLike(it.id, "chocopooding")
                 }
+                Thread.sleep(200)
                 val likePostPage =
                     postService.findPageBy(
                         PageRequest.of(0, 5),

@@ -1,5 +1,6 @@
 package pe.swkim.fcboard.domain
 
+import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass
 import java.time.LocalDateTime
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime
 abstract class BaseEntity(
     createdBy: String,
 ) {
+    @Column(name = "created_by")
     val createdBy: String = createdBy
     val createdAt: LocalDateTime = LocalDateTime.now()
     var updatedBy: String? = null

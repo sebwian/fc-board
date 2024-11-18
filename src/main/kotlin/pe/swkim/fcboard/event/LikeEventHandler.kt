@@ -20,7 +20,6 @@ class LikeEventHandler(
     @Async
     @TransactionalEventListener(LikeEvent::class)
     fun handle(event: LikeEvent) {
-        Thread.sleep(3000)
         val post = postRepository.findByIdOrNull(event.postId) ?: throw PostNotFoundException()
         redisUtil.increment(redisUtil.getLikeCountKey(event.postId))
         likeRepository.save(Like(post, event.createdBy)).id

@@ -11,7 +11,7 @@ class RedisUtil(
         key: String,
         value: Any,
     ) {
-        redisTemplate.opsForValue().set(key, value)
+        redisTemplate.opsForValue().set(key, value.toString())
     }
 
     fun getData(key: String): Any? = redisTemplate.opsForValue().get(key)
